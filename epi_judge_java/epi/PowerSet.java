@@ -5,32 +5,33 @@ import epi.test_framework.EpiTestComparator;
 import epi.test_framework.GenericTestHandler;
 import epi.test_framework.LexicographicalListComparator;
 
-import java.util.Collections;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 public class PowerSet {
 
     @EpiTest(testfile = "power_set.tsv")
     public static List<List<Integer>> generatePowerSetRecursively(List<Integer> inputSet) {
         List<List<Integer>> allSubsets = new LinkedList<>();
-        doGeneratePowerSetRecursively(inputSet, 0, new LinkedList<>(), allSubsets);
+        doGeneratePowerSetRecursively(inputSet, 0, new Integer[inputSet.size()], allSubsets);
         return allSubsets;
     }
 
     private static void doGeneratePowerSetRecursively(List<Integer> inputSet, int i,
-                                                      Deque<Integer> subset, List<List<Integer>> allSubsets) {
+                                                      Integer[] subset, List<List<Integer>> allSubsets) {
         if (i == inputSet.size()) {
-            allSubsets.add(new LinkedList<>(subset));
+            List<Integer> sanitizedSubset = Arrays.stream(subset)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            allSubsets.add(sanitizedSubset);
             return;
         }
-        // generate all subsets that contain inputSet.get(i)
-        subset.addLast(inputSet.get(i));
-        doGeneratePowerSetRecursively(inputSet, i + 1, subset, allSubsets);
         // generate all subsets that do not contain inputSet.get(i)
-        subset.removeLast();
+        subset[i] = null;
+        doGeneratePowerSetRecursively(inputSet, i + 1, subset, allSubsets);
+        // generate all subsets that contain inputSet.get(i)
+        subset[i] = inputSet.get(i);
         doGeneratePowerSetRecursively(inputSet, i + 1, subset, allSubsets);
     }
 
@@ -77,7 +78,6 @@ public class PowerSet {
 
     public static void main(String[] args) {
         GenericTestHandler.executeTestsByAnnotation(
-                new Object() {
-                }.getClass().getEnclosingClass(), args);
+                new Object() {}.getClass().getEnclosingClass(), args);
     }
 }
