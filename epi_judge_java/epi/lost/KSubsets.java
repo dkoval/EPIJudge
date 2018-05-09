@@ -10,10 +10,10 @@ public class KSubsets {
         doPrintCombinations(arr, 0, combination, 0, k);
     }
 
-    private static void doPrintCombinations(int[] arr, int offset, int[] combination, int idx, int k) {
+    private static void doPrintCombinations(int[] arr, int offset, int[] subset, int idx, int k) {
         if (idx == k) {
             for (int j = 0; j < k; j++) {
-                System.out.print(combination[j] + " ");
+                System.out.print(subset[j] + " ");
             }
             System.out.println();
             return;
@@ -23,14 +23,14 @@ public class KSubsets {
             return;
         }
 
-        // current is included, put next at next location
-        combination[idx] = arr[offset];
-        doPrintCombinations(arr, offset + 1, combination, idx + 1, k);
+        // current index is included, move on to the next position
+        subset[idx] = arr[offset];
+        doPrintCombinations(arr, offset + 1, subset, idx + 1, k);
 
 
-        // current is excluded, replace it with next
-        // Note that offset + 1 is passed, but idx is not changed
-        doPrintCombinations(arr, offset + 1, combination, idx, k);
+        // current index is excluded, note that
+        // offset + 1 is passed, but idx is not changed
+        doPrintCombinations(arr, offset + 1, subset, idx, k);
     }
 
     public static void main(String[] args) {
