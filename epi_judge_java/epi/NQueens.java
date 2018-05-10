@@ -27,22 +27,25 @@ public class NQueens {
         } else {
             for (int col = 0; col < n; col++) {
                 colPlacement.add(col);
-                if (isValid(colPlacement)) {
+                if (isValid(colPlacement, row, col)) {
                     solveNQueens(n, row + 1, colPlacement, result);
                 }
-                // backtracking
                 colPlacement.remove(colPlacement.size() - 1);
             }
         }
     }
 
-    private static boolean isValid(List<Integer> colPlacement) {
+    private static boolean isValid(List<Integer> colPlacement, int row, int col) {
         // make sure newly placed queen doesn't conflict with any queens placed before
-        int row = colPlacement.size() - 1;
         for (int i = 0; i < row; i++) {
-            int diff = Math.abs(colPlacement.get(i) - colPlacement.get(row));
-            // check vertical and diagonal conflicts
-            if (diff == 0 || diff == row - i) {
+            // check vertical conflict
+            int colDistance = Math.abs(colPlacement.get(i) - col);
+            if (colDistance == 0) {
+                return false;
+            }
+            // check diagonal conflict
+            int rowDistance = row - i;
+            if (colDistance == rowDistance) {
                 return false;
             }
         }
